@@ -9,12 +9,18 @@ import lombok.Data;
 
 @Data
 @Entity
+
 public class Client {
    @Id
     @GeneratedValue
     private Long id;
     private String name;
-    private String number;
+    private String company;
     private String site;
+    private String number;
+    private String email;
+    private Contract contract;
+
+
 
 }
