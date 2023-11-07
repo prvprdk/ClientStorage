@@ -5,7 +5,6 @@ import com.example.clientstorage.components.site.FormSite;
 import com.example.clientstorage.domain.Site;
 import com.example.clientstorage.repo.RepoSite;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.icon.Icon;
@@ -59,12 +58,6 @@ public class SiteView extends VerticalLayout {
             formSite.setVisible(false);
         });
 
-        listSite();
-    }
-
-    private void delete(Site site) {
-        repoSite.delete(site);
-        accessTable.setVisible(false);
         listSite();
     }
 

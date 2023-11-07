@@ -21,16 +21,9 @@ import lombok.Setter;
 public class AccessForm extends VerticalLayout {
 
 
-    private final TextField urlField = new TextField("url");
-    private final TextField loginField = new TextField("login");
-    private final TextField passwordField = new TextField("password");
     private final Binder<Access> binder = new Binder<>(Access.class, false);
-    private final Button addButton = new Button("add access", VaadinIcon.PLUS.create());
-
-    private final ComboBox<TypeAccesses> typeAccessesComboBox = new ComboBox<>("type");
-
     private Access access;
-    private  final RepoAccesses repoAccesses;
+    private final RepoAccesses repoAccesses;
     @Setter
     private AccessAuthor accessAuthor;
     @Setter
@@ -47,9 +40,15 @@ public class AccessForm extends VerticalLayout {
 
     }
 
-    public AccessForm(RepoAccesses repoAccesses){
+    public AccessForm(RepoAccesses repoAccesses) {
         this.repoAccesses = repoAccesses;
 
+        TextField urlField = new TextField("url");
+        TextField loginField = new TextField("login");
+        TextField passwordField = new TextField("password");
+        Button addButton = new Button("add access", VaadinIcon.PLUS.create());
+
+        ComboBox<TypeAccesses> typeAccessesComboBox = new ComboBox<>("type");
 
         typeAccessesComboBox.setItems(TypeAccesses.values());
         binder.forField(urlField).bind(Access::getUrl, Access::setUrl);

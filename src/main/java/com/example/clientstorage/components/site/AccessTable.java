@@ -36,11 +36,7 @@ public class AccessTable extends VerticalLayout {
 
         add(accessForm, grid);
 
-        this.accessForm.setAccessAuthor(
-                access -> {
-                    access.setSite(site);
-                }
-        );
+        this.accessForm.setAccessAuthor(access -> access.setSite(site));
         this.accessForm.setChangeHandler(() -> updateListAccess(site.getId()));
 
         setVisible(false);
@@ -62,13 +58,9 @@ public class AccessTable extends VerticalLayout {
         grid.addColumn(Access::getPassword).setHeader("password");
         grid.addComponentColumn(access -> {
             Button deleteButton = new Button("delete");
-            deleteButton.addClickListener(e -> {
-                        delete(access);
-                    }
-            );
+            deleteButton.addClickListener(e -> delete(access));
             return deleteButton;
         });
-
 
     }
 

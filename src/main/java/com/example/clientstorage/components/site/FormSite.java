@@ -17,9 +17,7 @@ public class FormSite extends VerticalLayout {
     private final RepoSite repoSite;
     private Site site;
 
-
     private final Binder<Site> binder = new Binder<>(Site.class, false);
-    private final Button save = new Button("save");
     private final TextField nameSite = new TextField("name site");
     @Setter
     private ClientEdit.ChangeHandler changeHandler;
@@ -27,14 +25,13 @@ public class FormSite extends VerticalLayout {
     public interface ChangeHandler {
         void onChange();
     }
-
     public FormSite(RepoSite repoSite ) {
         this.repoSite = repoSite;
 
 
         binder.forField(nameSite).bind(Site::getName, Site::setName);
 
-
+        Button save = new Button("save");
         add(nameSite, save);
 
         setSpacing(true);
