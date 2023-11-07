@@ -23,20 +23,14 @@ import lombok.Setter;
 public class ClientEdit extends VerticalLayout implements KeyNotifier {
     private final RepoClient repoClient;
     private Client client;
-
     private final TextField name = new TextField("Name");
     private final TextField number = new TextField("Number");
     private final TextField site = new TextField("Site");
-
     private final ComboBox<Contract> contracts = new ComboBox<>("Contract");
-
     private final TextField company = new TextField("Company");
-
     private final EmailField email = new EmailField("Email");
-
     private final Button save = new Button("Save", VaadinIcon.CHECK.create());
     private final Button cancel = new Button("Cancel");
-
     private final HorizontalLayout actions = new HorizontalLayout(save, cancel);
 
     private final Binder<Client> binder = new Binder<>(Client.class);
@@ -61,19 +55,14 @@ public class ClientEdit extends VerticalLayout implements KeyNotifier {
         binder.forField(email).bind(Client::getEmail, Client::setEmail);
 
         add(name, number, site, company, contracts, email, actions);
-        // binder.bindInstanceFields(this);
-
 
         setSpacing(true);
 
         save.getElement().getThemeList().add("primary");
-
         addKeyPressListener(Key.ENTER, e -> save());
 
         save.addClickListener(e -> save());
-        cancel.addClickListener(e ->
-                setVisible(false)
-        );
+        cancel.addClickListener(e -> setVisible(false));
 
         setVisible(false);
 
@@ -85,7 +74,6 @@ public class ClientEdit extends VerticalLayout implements KeyNotifier {
         changeHandler.onChange();
     }
 
-
     public void editClient(Client newClient) {
         if (newClient == null) {
             setVisible(false);
@@ -96,6 +84,5 @@ public class ClientEdit extends VerticalLayout implements KeyNotifier {
         binder.setBean(this.client);
         setVisible(true);
         name.focus();
-
     }
 }

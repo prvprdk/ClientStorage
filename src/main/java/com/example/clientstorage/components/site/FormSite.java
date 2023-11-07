@@ -33,12 +33,13 @@ public class FormSite extends VerticalLayout {
 
 
         binder.forField(nameSite).bind(Site::getName, Site::setName);
+
+
         add(nameSite, save);
 
         setSpacing(true);
         save.addClickListener(e -> save());
         setVisible(false);
-
 
     }
 

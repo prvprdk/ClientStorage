@@ -7,6 +7,7 @@ import com.example.clientstorage.repo.RepoAccesses;
 import com.example.clientstorage.repo.RepoSite;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
@@ -20,6 +21,7 @@ public class AccessTable extends VerticalLayout {
     private final RepoAccesses repoAccesses;
     private final AccessForm accessForm;
     private Grid<Access> grid;
+    H2 nameSite = new H2();
 
     private Site site;
 
@@ -31,6 +33,7 @@ public class AccessTable extends VerticalLayout {
         this.accessForm = accessForm;
 
         setupGrid();
+
         add(accessForm, grid);
 
         this.accessForm.setAccessAuthor(
@@ -49,18 +52,23 @@ public class AccessTable extends VerticalLayout {
         grid = new Grid<>(Access.class, false);
 
 
+        nameSite.getStyle().set("margin", "0 auto 0 0");
+
+        add(nameSite);
+
         grid.addColumn(Access::getTypeAccesses).setHeader("type");
         grid.addColumn(Access::getUrl).setHeader("url");
         grid.addColumn(Access::getLogin).setHeader("login");
         grid.addColumn(Access::getPassword).setHeader("password");
         grid.addComponentColumn(access -> {
-            Button editButton = new Button("delete");
-            editButton.addClickListener(e -> {
+            Button deleteButton = new Button("delete");
+            deleteButton.addClickListener(e -> {
                         delete(access);
                     }
             );
-            return editButton;
+            return deleteButton;
         });
+
 
     }
 
@@ -84,6 +92,7 @@ public class AccessTable extends VerticalLayout {
             return;
         }
         site = from;
+        nameSite.setText(site.getName());
         grid.setItems(site.getAccessesSet());
         setVisible(true);
     }

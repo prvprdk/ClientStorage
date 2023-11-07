@@ -71,7 +71,6 @@ public class AccessForm extends VerticalLayout {
         addButton.addClickListener(e -> addAccess());
         add(horizontalLayout, addButton);
 
-
     }
 
     private void extracted() {
