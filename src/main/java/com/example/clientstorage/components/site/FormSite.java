@@ -4,7 +4,7 @@ import com.example.clientstorage.components.client.ClientEdit;
 import com.example.clientstorage.domain.Site;
 import com.example.clientstorage.repo.RepoSite;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.spring.annotation.SpringComponent;
@@ -13,23 +13,27 @@ import lombok.Setter;
 
 @SpringComponent
 @UIScope
-public class FormSite extends VerticalLayout {
+public class FormSite extends HorizontalLayout {
     private final RepoSite repoSite;
     private Site site;
 
     private final Binder<Site> binder = new Binder<>(Site.class, false);
-    private final TextField nameSite = new TextField("name site");
+    private final TextField nameSite = new TextField();
     @Setter
     private ClientEdit.ChangeHandler changeHandler;
 
     public interface ChangeHandler {
         void onChange();
     }
-    public FormSite(RepoSite repoSite ) {
+
+    public FormSite(RepoSite repoSite) {
         this.repoSite = repoSite;
 
 
-        binder.forField(nameSite).bind(Site::getName, Site::setName);
+        binder.forField(nameSite)
+                .asRequired("domain must not be empty")
+                .bind(Site::getName, Site::setName);
+        nameSite.setPlaceholder("enter site");
 
         Button save = new Button("save");
         add(nameSite, save);
@@ -41,8 +45,13 @@ public class FormSite extends VerticalLayout {
     }
 
     private void save() {
-        repoSite.save(site);
-        changeHandler.onChange();
+        if (binder.isValid()) {
+            repoSite.save(site);
+            changeHandler.onChange();
+        }else {
+            nameSite.focus();
+        }
+
     }
 
     public void openSiteForm(Site newSite) {
@@ -55,7 +64,7 @@ public class FormSite extends VerticalLayout {
         binder.setBean(site);
 
         setVisible(true);
-        nameSite.focus();
+
 
     }
 }

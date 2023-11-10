@@ -16,6 +16,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.validator.EmailValidator;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -32,75 +33,53 @@ public class ClientView extends VerticalLayout {
     private final Grid<Client> grid = new Grid<>(Client.class, false);
     private final Binder<Client> binder = new Binder<>(Client.class);
     private final Editor<Client> editor = grid.getEditor();
+    private final Grid.Column<Client> name = grid.addColumn(Client::getName).setHeader("name").setSortable(true);
+    private final Grid.Column<Client> company = grid.addColumn(Client::getCompany).setHeader("company").setSortable(true);
+    private final Grid.Column<Client> number = grid.addColumn(Client::getNumber).setHeader("number").setSortable(true);
+    private final Grid.Column<Client> site = grid.addColumn(Client::getSite).setHeader("site");
+    private final Grid.Column<Client> email = grid.addColumn(Client::getEmail).setHeader("email");
+    private final Grid.Column<Client> contact = grid.addColumn(Client::getContract).setHeader("contact").setSortable(true);
+    private final Grid.Column<Client> editColumn = grid.addComponentColumn(client -> {
+        Button editButton = new Button("edit");
+        editButton.addClickListener(e -> {
+            if (editor.isOpen())
+                editor.cancel();
+            grid.getEditor().editItem(client);
+        });
+        return editButton;
+    });
 
 
     public ClientView(ClientEdit clientEdit, RepoClient repoClient) {
         this.clientEdit = clientEdit;
         this.repoClient = repoClient;
 
-        Grid.Column<Client> name = grid.addColumn(Client::getName).setHeader("name").setSortable(true);
-        Grid.Column<Client> company = grid.addColumn(Client::getCompany).setHeader("company").setSortable(true);
-        Grid.Column<Client> number = grid.addColumn(Client::getNumber).setHeader("number").setSortable(true);
-        Grid.Column<Client> site = grid.addColumn(Client::getSite).setHeader("site");
-        Grid.Column<Client> email = grid.addColumn(Client::getEmail).setHeader("email");
-        Grid.Column<Client> contact = grid.addColumn(Client::getContract).setHeader("contact").setSortable(true);
-        Grid.Column<Client> editColumn = grid.addComponentColumn(client -> {
-            Button editButton = new Button("edit");
-            editButton.addClickListener(e -> {
-                        if (editor.isOpen())
-                            editor.cancel();
-                        grid.getEditor().editItem(client);
-                    }
-            );
-            return editButton;
-        });
-
         editor.setBinder(binder);
-
-        TextField nameField = new TextField();
-        setField(nameField, name);
-
-        TextField companyField = new TextField();
-        setField(companyField, company);
-
-        TextField numberField = new TextField();
-        setField(numberField, number);
-
-        TextField siteField = new TextField();
-        setField(siteField, site);
-
-        EmailField emailField = new EmailField();
-        setField(emailField, email);
-
-        ComboBox<Contract> contractComboBox = new ComboBox<>();
-        contractComboBox.setItems(Contract.values());
-        contractComboBox.setAllowCustomValue(true);
-        binder.forField(contractComboBox).bind(Client::getContract, Client::setContract);
-        contact.setEditorComponent(contractComboBox);
+        setEditComp();
+        grid.setMinHeight("750px");
 
 
-        Button saveButton = new Button("Save", e -> {
-            repoClient.save(editor.setBinder(binder).getItem());
-            listClient(null);
-        });
+        Button saveButton = new Button(new Icon(VaadinIcon.BOLT), e -> save(editor.setBinder(binder).getItem()));
+        saveButton
+                .addThemeVariants(ButtonVariant.LUMO_SUCCESS,
+                        ButtonVariant.LUMO_ICON);
+
+        Button deleteButton = new Button(new Icon(VaadinIcon.TRASH), e -> delete(editor.setBinder(binder).getItem()));
+        deleteButton
+                .addThemeVariants(ButtonVariant.LUMO_ICON,
+                        ButtonVariant.LUMO_ERROR,
+                        ButtonVariant.LUMO_TERTIARY);
 
         Button cancelButton = new Button(VaadinIcon.CLOSE.create(), e -> editor.closeEditor());
+        cancelButton
+                .addThemeVariants(ButtonVariant.LUMO_ICON,
+                        ButtonVariant.LUMO_CONTRAST,
+                        ButtonVariant.LUMO_ERROR);
 
-        cancelButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_ERROR);
-
-        Button deleteButton = new Button("delete", e -> {
-            repoClient.delete(editor.setBinder(binder).getItem());
-            listClient(null);
-        });
-
-        deleteButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 
         HorizontalLayout actions = new HorizontalLayout(saveButton, cancelButton, deleteButton);
 
         editColumn.setEditorComponent(actions);
-
-        setSizeFull();
-
 
         filter.setValueChangeMode(ValueChangeMode.EAGER);
         filter.addValueChangeListener(e -> listClient(e.getValue()));
@@ -109,14 +88,13 @@ public class ClientView extends VerticalLayout {
                     if (clientEdit.isVisible()) {
                         clientEdit.setVisible(false);
                     } else {
-                        clientEdit.editClient(new Client());
+                        clientEdit.addClientForm(new Client());
                     }
                 }
         );
 
 
         add(filter, grid, addNewClient, clientEdit);
-
 
         clientEdit.setChangeHandler(() -> {
             listClient(null);
@@ -127,20 +105,14 @@ public class ClientView extends VerticalLayout {
 
     }
 
-    private void setField(TextField nameField, Grid.Column<Client> name) {
-        nameField.setWidthFull();
-        binder.forField(nameField).bind(Client::getName, Client::setName);
-        name.setEditorComponent(nameField);
+    private void save(Client client) {
+        repoClient.save(client);
+        listClient(null);
     }
 
-    private void setField(EmailField nameField, Grid.Column<Client> name) {
-        nameField.setWidthFull();
-        binder.forField(nameField).bind(Client::getName, Client::setName);
-        name.setEditorComponent(nameField);
-    }
-
-    private void save() {
-
+    private void delete(Client client) {
+        repoClient.delete(client);
+        listClient(null);
     }
 
     public void listClient(String filterText) {
@@ -149,5 +121,48 @@ public class ClientView extends VerticalLayout {
         } else {
             grid.setItems(repoClient.findAll());
         }
+    }
+
+    private void setEditComp() {
+        TextField nameField = new TextField();
+        nameField.setWidthFull();
+        binder.forField(nameField)
+
+                .bind(Client::getName, Client::setName);
+        name.setEditorComponent(nameField);
+
+        TextField companyField = new TextField();
+        companyField.setWidthFull();
+        binder.forField(companyField)
+                .asRequired("Oops")
+                .bind(Client::getCompany, Client::setCompany);
+        company.setEditorComponent(companyField);
+
+        TextField numberField = new TextField();
+        numberField.setWidthFull();
+        binder.forField(numberField).bind(Client::getNumber, Client::setNumber);
+        number.setEditorComponent(numberField);
+
+        TextField siteField = new TextField();
+        siteField.setWidthFull();
+        binder.forField(siteField).bind(Client::getSite, Client::setSite);
+        site.setEditorComponent(siteField);
+
+        EmailField emailField = new EmailField();
+        emailField.setWidthFull();
+        binder.forField(emailField)
+                .withValidator(new EmailValidator(
+                        "This doesn't look like a valid email address"))
+                .withValidator(
+                        email -> email.endsWith("@acme.com"),
+                        "Only acme.com email addresses are allowed")
+                .bind(Client::getEmail, Client::setEmail);
+        email.setEditorComponent(emailField);
+
+        ComboBox<Contract> contractComboBox = new ComboBox<>();
+        contractComboBox.setItems(Contract.values());
+        contractComboBox.setAllowCustomValue(true);
+        binder.forField(contractComboBox).bind(Client::getContract, Client::setContract);
+        contact.setEditorComponent(contractComboBox);
     }
 }

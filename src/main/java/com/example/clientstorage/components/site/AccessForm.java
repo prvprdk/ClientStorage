@@ -46,15 +46,15 @@ public class AccessForm extends VerticalLayout {
         TextField urlField = new TextField("url");
         TextField loginField = new TextField("login");
         TextField passwordField = new TextField("password");
-        Button addButton = new Button("add access", VaadinIcon.PLUS.create());
+        Button addButton = new Button("save", VaadinIcon.PLUS.create());
 
         ComboBox<TypeAccesses> typeAccessesComboBox = new ComboBox<>("type");
 
         typeAccessesComboBox.setItems(TypeAccesses.values());
-        binder.forField(urlField).bind(Access::getUrl, Access::setUrl);
-        binder.forField(loginField).bind(Access::getLogin, Access::setLogin);
-        binder.forField(passwordField).bind(Access::getPassword, Access::setPassword);
-        binder.forField(typeAccessesComboBox).bind(Access::getTypeAccesses, Access::setTypeAccesses);
+        binder.forField(urlField).asRequired("url must not be empty").bind(Access::getUrl, Access::setUrl);
+        binder.forField(loginField).asRequired("login must not be empty").bind(Access::getLogin, Access::setLogin);
+        binder.forField(passwordField).asRequired("password must not be empty").bind(Access::getPassword, Access::setPassword);
+        binder.forField(typeAccessesComboBox).asRequired("access must not be empty").bind(Access::getTypeAccesses, Access::setTypeAccesses);
 
 
         HorizontalLayout horizontalLayout = new HorizontalLayout(urlField, loginField, passwordField, typeAccessesComboBox);
@@ -79,10 +79,11 @@ public class AccessForm extends VerticalLayout {
     }
 
     public void addAccess() {
-        accessAuthor.setAuthor(access);
-        repoAccesses.save(access);
-        changeHandler.onChange();
-        extracted();
+        if (binder.isValid()) {
+            accessAuthor.setAuthor(access);
+            repoAccesses.save(access);
+            changeHandler.onChange();
+            extracted();
+        }
     }
-
 }
