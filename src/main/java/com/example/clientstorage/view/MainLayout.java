@@ -1,6 +1,8 @@
 package com.example.clientstorage.view;
 
+import com.example.clientstorage.security.SecurityService;
 import com.vaadin.flow.component.applayout.AppLayout;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
@@ -9,11 +11,12 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
 
 @Route("/")
-
 @PageTitle("Space Company")
 public class MainLayout extends AppLayout {
+    private final SecurityService securityService;
 
-    public MainLayout() {
+    public MainLayout(SecurityService securityService) {
+        this.securityService = securityService;
         createHeader();
 
 
@@ -23,11 +26,12 @@ public class MainLayout extends AppLayout {
         H1 title = new H1("Space Company");
         title.getStyle().set("font-size", "var(--lumo-font-size-l)")
                 .set("left", "var(--lumo-space-l)").set("margin", "0")
-                .set("position", "absolute")
-        ;
+                .set("position", "absolute");
 
+        String u = securityService.getAuthenticatedUser().getUsername();
+        Button logout = new Button("Log out " + u, e -> securityService.logout());
 
-        addToNavbar(title, getTabs());
+        addToNavbar(title, getTabs(), logout);
     }
 
     private Tabs getTabs() {

@@ -7,9 +7,9 @@ import com.example.clientstorage.domain.TypeAccesses;
 import com.example.clientstorage.repo.RepoAccesses;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.spring.annotation.SpringComponent;
@@ -18,7 +18,7 @@ import lombok.Setter;
 
 @SpringComponent
 @UIScope
-public class AccessForm extends VerticalLayout {
+public class AccessForm extends FormLayout {
 
 
     private final Binder<Access> binder = new Binder<>(Access.class, false);
@@ -57,7 +57,7 @@ public class AccessForm extends VerticalLayout {
         binder.forField(typeAccessesComboBox).asRequired("access must not be empty").bind(Access::getTypeAccesses, Access::setTypeAccesses);
 
 
-        HorizontalLayout horizontalLayout = new HorizontalLayout(urlField, loginField, passwordField, typeAccessesComboBox);
+
 
         urlField.setSizeFull();
         loginField.setSizeFull();
@@ -66,9 +66,15 @@ public class AccessForm extends VerticalLayout {
 
         extracted();
 
-        add(horizontalLayout);
+        setResponsiveSteps(
+                new FormLayout.ResponsiveStep("0", 1),
+                new FormLayout.ResponsiveStep("500px", 3),
+                new FormLayout.ResponsiveStep("800px", 7));
+
+
+        add(urlField, loginField, passwordField, typeAccessesComboBox, addButton);
         addButton.addClickListener(e -> addAccess());
-        add(horizontalLayout, addButton);
+
 
     }
 
