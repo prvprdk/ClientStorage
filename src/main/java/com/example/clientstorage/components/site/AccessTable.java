@@ -14,6 +14,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
+import com.vaadin.flow.theme.lumo.LumoUtility;
 
 
 @SpringComponent
@@ -50,6 +51,7 @@ public class AccessTable extends VerticalLayout {
 
         grid = new Grid<>(Access.class, false);
 
+        grid.addClassNames(LumoUtility.BorderRadius.LARGE, LumoUtility.BoxShadow.SMALL);
 
         add(nameSite);
 

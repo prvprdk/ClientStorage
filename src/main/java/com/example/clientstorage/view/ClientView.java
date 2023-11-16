@@ -20,11 +20,13 @@ import com.vaadin.flow.data.validator.EmailValidator;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.theme.lumo.LumoUtility;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.util.StringUtils;
 
 @PermitAll
-@Route(value = "clients", layout = MainLayout.class)
+
+@Route(value = "/", layout = MainLayout.class)
 @PageTitle("Clients")
 
 public class ClientView extends VerticalLayout {
@@ -58,7 +60,9 @@ public class ClientView extends VerticalLayout {
 
         editor.setBinder(binder);
         setEditComp();
-        grid.setMinHeight("750px");
+
+
+        grid.addClassNames(LumoUtility.BorderRadius.LARGE, LumoUtility.BoxShadow.SMALL);
 
 
         Button saveButton = new Button(new Icon(VaadinIcon.BOLT), e -> save(editor.setBinder(binder).getItem()));
@@ -96,7 +100,7 @@ public class ClientView extends VerticalLayout {
         );
 
 
-        add(filter, grid, addNewClient, clientEdit);
+        add(filter, addNewClient, clientEdit, grid);
 
         clientEdit.setChangeHandler(() -> {
             listClient(null);

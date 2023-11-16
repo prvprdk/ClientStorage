@@ -12,10 +12,11 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.theme.lumo.LumoUtility;
 import jakarta.annotation.security.PermitAll;
 
 @PermitAll
-@Route(value = "accesses", layout = MainLayout.class)
+@Route(layout = MainLayout.class)
 @PageTitle("Accesses")
 public class SiteView extends VerticalLayout {
 
@@ -25,15 +26,18 @@ public class SiteView extends VerticalLayout {
     private final Button openingForm = new Button(new Icon(VaadinIcon.PLUS));
     private final Grid<Site> grid = new Grid<>(Site.class, false);
 
+
     public SiteView(RepoSite repoSite, AccessTable accessTable, FormSite formSite) {
 
         this.repoSite = repoSite;
         this.accessTable = accessTable;
         this.formSite = formSite;
 
+
         grid.addColumn(Site::getName);
         grid.addThemeVariants(GridVariant.LUMO_NO_ROW_BORDERS);
 
+        grid.addClassNames(LumoUtility.BorderRadius.LARGE, LumoUtility.BoxShadow.SMALL, LumoUtility.Border.NONE);
 
         openingForm.addClickListener(e -> {
             if (formSite.isVisible()) {
