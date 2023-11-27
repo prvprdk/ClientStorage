@@ -1,0 +1,27 @@
+services:
+  db_service_cs:
+    image: postgres:16.1-alpine3.17
+    ports:
+      - ${POSTGRES_LOCAL_PORT_CS}:${POSTGRES_DOCKER_PORT_CS}
+    container_name: mysql_db_cs
+    restart: always
+    environment:
+      - POSTGRES_DB=${POSTGRES_DATABASE_CS}
+      - POSTGRES_PASSWORD=${POSTGRES_ROOT_PASSWORD_CS}
+  cs_app_service:
+    depends_on:
+      - db_service_cs
+    image: farrokh4/client-storage
+    container_name: cs_app
+    ports:
+      - $SPRING_LOCAL_PORT_CS:${SPRING_DOCKER_PORT_CS}
+    environment:
+      SPRING_APPLICATION_JSON: '{
+      "spring.datasource.url" : "jdbc:postgresql://db_service_cs/$POSTGRES_CS_DATABASE",
+      "spring.datasource.username" : "${POSTGRES_USER}",
+      "spring.datasource.password" : "${POSTGRES_ROOT_PASSWORD}",
+      "spring.jpa.generate-ddl" : "true",
+      "spring.jpa.show-sql" : "false",
+      "spring.jpa.hibernate.ddl-auto" : "validate"
+      }'
+    restart: always
